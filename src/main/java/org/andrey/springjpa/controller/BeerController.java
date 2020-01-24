@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.andrey.springjpa.domain.Beer;
+import org.andrey.springjpa.exceptions.EntityNotFoundException;
 import org.andrey.springjpa.persistence.BeerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -48,6 +49,7 @@ public class BeerController {
 	@PutMapping("/{id}")
 	public ResponseEntity<Beer> putBeer(@RequestBody Beer beer, @PathVariable("id") Long id){
 		Beer oldBeer = beerRepo.getOne(id);
+		if (oldBeer == null) throw new EntityNotFoundException();
 		beer = beerRepo.save(beer);
 		
 		return new ResponseEntity<>(beer, HttpStatus.OK);
@@ -56,6 +58,7 @@ public class BeerController {
 	@PatchMapping("/{id}")
 	public ResponseEntity<Beer> patchBeer(@RequestBody Beer beer, @PathVariable("id") Long id){
 		Beer oldBeer = beerRepo.getOne(id);
+		if (oldBeer == null) throw new EntityNotFoundException();
 		
 		if (beer.getName() != null) oldBeer.setName(beer.getName());
 		if (beer.getType() != null) oldBeer.setType(beer.getType());
